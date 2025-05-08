@@ -1,0 +1,48 @@
+=== Logistic Regression ===
+                     precision    recall  f1-score   support
+
+Insufficient_Weight       0.84      1.00      0.91        56
+      Normal_Weight       0.91      0.63      0.74        62
+     Obesity_Type_I       0.93      0.90      0.92        78
+    Obesity_Type_II       0.90      0.97      0.93        58
+   Obesity_Type_III       1.00      1.00      1.00        63
+ Overweight_Level_I       0.75      0.75      0.75        56
+Overweight_Level_II       0.74      0.84      0.79        50
+
+           accuracy                           0.87       423
+          macro avg       0.87      0.87      0.86       423
+       weighted avg       0.87      0.87      0.87       423
+
+
+=== Decision Tree ===
+                     precision    recall  f1-score   support
+
+Insufficient_Weight       0.93      0.96      0.95        56
+      Normal_Weight       0.90      0.90      0.90        62
+     Obesity_Type_I       0.96      0.92      0.94        78
+    Obesity_Type_II       0.93      0.95      0.94        58
+   Obesity_Type_III       1.00      1.00      1.00        63
+ Overweight_Level_I       0.91      0.93      0.92        56
+Overweight_Level_II       0.96      0.94      0.95        50
+
+           accuracy                           0.94       423
+          macro avg       0.94      0.94      0.94       423
+       weighted avg       0.94      0.94      0.94       423
+
+
+=== SVM ===
+                     precision    recall  f1-score   support
+
+Insufficient_Weight       0.96      0.96      0.96        56
+      Normal_Weight       0.84      0.87      0.86        62
+     Obesity_Type_I       0.96      0.96      0.96        78
+    Obesity_Type_II       0.95      0.98      0.97        58
+   Obesity_Type_III       1.00      1.00      1.00        63
+ Overweight_Level_I       0.84      0.84      0.84        56
+Overweight_Level_II       0.96      0.88      0.92        50
+
+           accuracy                           0.93       423
+          macro avg       0.93      0.93      0.93       423
+       weighted avg       0.93      0.93      0.93       423
+
+

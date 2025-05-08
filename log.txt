@@ -1,0 +1,224 @@
+Dane wczytane z C:/Users/Kuba/PycharmProjects/MSiD1/ObesityDataSet.csv
+Preprocessor skonfigurowany
+Split z stratify
+Logistic Regression CV mean: 0.8791
+=== Logistic Regression ===
+                     precision    recall  f1-score   support
+
+Insufficient_Weight       0.87      1.00      0.93        54
+      Normal_Weight       0.85      0.69      0.76        58
+     Obesity_Type_I       0.94      0.91      0.93        70
+    Obesity_Type_II       0.95      0.98      0.97        60
+   Obesity_Type_III       0.98      1.00      0.99        65
+ Overweight_Level_I       0.70      0.78      0.74        58
+Overweight_Level_II       0.80      0.74      0.77        58
+
+           accuracy                           0.87       423
+          macro avg       0.87      0.87      0.87       423
+       weighted avg       0.88      0.87      0.87       423
+
+Zapisano macierz: results\logistic_regression_confusion_matrix.png
+Decision Tree CV mean: 0.9212
+=== Decision Tree ===
+                     precision    recall  f1-score   support
+
+Insufficient_Weight       0.94      0.93      0.93        54
+      Normal_Weight       0.84      0.83      0.83        58
+     Obesity_Type_I       0.91      0.96      0.93        70
+    Obesity_Type_II       0.98      0.97      0.97        60
+   Obesity_Type_III       1.00      1.00      1.00        65
+ Overweight_Level_I       0.86      0.84      0.85        58
+Overweight_Level_II       0.91      0.91      0.91        58
+
+           accuracy                           0.92       423
+          macro avg       0.92      0.92      0.92       423
+       weighted avg       0.92      0.92      0.92       423
+
+Zapisano macierz: results\decision_tree_confusion_matrix.png
+SVM CV mean: 0.9194
+=== SVM ===
+                     precision    recall  f1-score   support
+
+Insufficient_Weight       0.95      0.96      0.95        54
+      Normal_Weight       0.89      0.84      0.87        58
+     Obesity_Type_I       0.97      0.94      0.96        70
+    Obesity_Type_II       0.97      0.98      0.98        60
+   Obesity_Type_III       1.00      1.00      1.00        65
+ Overweight_Level_I       0.83      0.86      0.85        58
+Overweight_Level_II       0.90      0.91      0.91        58
+
+           accuracy                           0.93       423
+          macro avg       0.93      0.93      0.93       423
+       weighted avg       0.93      0.93      0.93       423
+
+Zapisano macierz: results\svm_confusion_matrix.png
+Zapisano wykres: results\accuracy_comparison.png
+Zapisano wykres: results\f1(macro)_comparison.png
+Dane wczytane z C:/Users/Kuba/PycharmProjects/MSiD1/ObesityDataSet.csv
+Preprocessor skonfigurowany
+Split z stratify
+Logistic Regression CV mean: 0.8791
+=== Logistic Regression ===
+                     precision    recall  f1-score   support
+
+Insufficient_Weight       0.87      1.00      0.93        54
+      Normal_Weight       0.85      0.69      0.76        58
+     Obesity_Type_I       0.94      0.91      0.93        70
+    Obesity_Type_II       0.95      0.98      0.97        60
+   Obesity_Type_III       0.98      1.00      0.99        65
+ Overweight_Level_I       0.70      0.78      0.74        58
+Overweight_Level_II       0.80      0.74      0.77        58
+
+           accuracy                           0.87       423
+          macro avg       0.87      0.87      0.87       423
+       weighted avg       0.88      0.87      0.87       423
+
+Zapisano macierz: results\logistic_regression_confusion_matrix.png
+Decision Tree CV mean: 0.9182
+=== Decision Tree ===
+                     precision    recall  f1-score   support
+
+Insufficient_Weight       0.94      0.93      0.93        54
+      Normal_Weight       0.83      0.84      0.84        58
+     Obesity_Type_I       0.92      0.97      0.94        70
+    Obesity_Type_II       1.00      0.98      0.99        60
+   Obesity_Type_III       1.00      1.00      1.00        65
+ Overweight_Level_I       0.88      0.84      0.86        58
+Overweight_Level_II       0.91      0.90      0.90        58
+
+           accuracy                           0.93       423
+          macro avg       0.93      0.92      0.92       423
+       weighted avg       0.93      0.93      0.93       423
+
+Zapisano macierz: results\decision_tree_confusion_matrix.png
+SVM CV mean: 0.9194
+=== SVM ===
+                     precision    recall  f1-score   support
+
+Insufficient_Weight       0.95      0.96      0.95        54
+      Normal_Weight       0.89      0.84      0.87        58
+     Obesity_Type_I       0.97      0.94      0.96        70
+    Obesity_Type_II       0.97      0.98      0.98        60
+   Obesity_Type_III       1.00      1.00      1.00        65
+ Overweight_Level_I       0.83      0.86      0.85        58
+Overweight_Level_II       0.90      0.91      0.91        58
+
+           accuracy                           0.93       423
+          macro avg       0.93      0.93      0.93       423
+       weighted avg       0.93      0.93      0.93       423
+
+Zapisano macierz: results\svm_confusion_matrix.png
+Zapisano wykres: results\accuracy_comparison.png
+Zapisano wykres: results\f1(macro)_comparison.png
+Dane wczytane z C:/Users/Kuba/PycharmProjects/MSiD1/ObesityDataSet.csv
+Preprocessor skonfigurowany
+Split z stratify
+Logistic Regression CV mean: 0.8791
+=== Logistic Regression ===
+                     precision    recall  f1-score   support
+
+Insufficient_Weight       0.87      1.00      0.93        54
+      Normal_Weight       0.85      0.69      0.76        58
+     Obesity_Type_I       0.94      0.91      0.93        70
+    Obesity_Type_II       0.95      0.98      0.97        60
+   Obesity_Type_III       0.98      1.00      0.99        65
+ Overweight_Level_I       0.70      0.78      0.74        58
+Overweight_Level_II       0.80      0.74      0.77        58
+
+           accuracy                           0.87       423
+          macro avg       0.87      0.87      0.87       423
+       weighted avg       0.88      0.87      0.87       423
+
+Zapisano macierz: results\logistic_regression_confusion_matrix.png
+Decision Tree CV mean: 0.9218
+=== Decision Tree ===
+                     precision    recall  f1-score   support
+
+Insufficient_Weight       0.94      0.93      0.93        54
+      Normal_Weight       0.86      0.83      0.84        58
+     Obesity_Type_I       0.93      0.97      0.95        70
+    Obesity_Type_II       1.00      0.98      0.99        60
+   Obesity_Type_III       1.00      1.00      1.00        65
+ Overweight_Level_I       0.86      0.86      0.86        58
+Overweight_Level_II       0.92      0.93      0.92        58
+
+           accuracy                           0.93       423
+          macro avg       0.93      0.93      0.93       423
+       weighted avg       0.93      0.93      0.93       423
+
+Zapisano macierz: results\decision_tree_confusion_matrix.png
+SVM CV mean: 0.9194
+=== SVM ===
+                     precision    recall  f1-score   support
+
+Insufficient_Weight       0.95      0.96      0.95        54
+      Normal_Weight       0.89      0.84      0.87        58
+     Obesity_Type_I       0.97      0.94      0.96        70
+    Obesity_Type_II       0.97      0.98      0.98        60
+   Obesity_Type_III       1.00      1.00      1.00        65
+ Overweight_Level_I       0.83      0.86      0.85        58
+Overweight_Level_II       0.90      0.91      0.91        58
+
+           accuracy                           0.93       423
+          macro avg       0.93      0.93      0.93       423
+       weighted avg       0.93      0.93      0.93       423
+
+Zapisano macierz: results\svm_confusion_matrix.png
+Zapisano wykres: results\accuracy_comparison.png
+Zapisano wykres: results\f1(macro)_comparison.png
+Dane wczytane z C:/Users/Kuba/PycharmProjects/MSiD1/ObesityDataSet.csv
+Preprocessor skonfigurowany
+Split z stratify
+Logistic Regression CV mean: 0.8791
+=== Logistic Regression ===
+                     precision    recall  f1-score   support
+
+Insufficient_Weight       0.87      1.00      0.93        54
+      Normal_Weight       0.85      0.69      0.76        58
+     Obesity_Type_I       0.94      0.91      0.93        70
+    Obesity_Type_II       0.95      0.98      0.97        60
+   Obesity_Type_III       0.98      1.00      0.99        65
+ Overweight_Level_I       0.70      0.78      0.74        58
+Overweight_Level_II       0.80      0.74      0.77        58
+
+           accuracy                           0.87       423
+          macro avg       0.87      0.87      0.87       423
+       weighted avg       0.88      0.87      0.87       423
+
+Zapisano macierz: results\logistic_regression_confusion_matrix.png
+Decision Tree CV mean: 0.9236
+=== Decision Tree ===
+                     precision    recall  f1-score   support
+
+Insufficient_Weight       0.96      0.94      0.95        54
+      Normal_Weight       0.85      0.88      0.86        58
+     Obesity_Type_I       0.93      0.94      0.94        70
+    Obesity_Type_II       0.97      0.98      0.98        60
+   Obesity_Type_III       1.00      1.00      1.00        65
+ Overweight_Level_I       0.89      0.84      0.87        58
+Overweight_Level_II       0.91      0.91      0.91        58
+
+           accuracy                           0.93       423
+          macro avg       0.93      0.93      0.93       423
+       weighted avg       0.93      0.93      0.93       423
+
+Zapisano macierz: results\decision_tree_confusion_matrix.png
+SVM CV mean: 0.9194
+=== SVM ===
+                     precision    recall  f1-score   support
+
+Insufficient_Weight       0.95      0.96      0.95        54
+      Normal_Weight       0.89      0.84      0.87        58
+     Obesity_Type_I       0.97      0.94      0.96        70
+    Obesity_Type_II       0.97      0.98      0.98        60
+   Obesity_Type_III       1.00      1.00      1.00        65
+ Overweight_Level_I       0.83      0.86      0.85        58
+Overweight_Level_II       0.90      0.91      0.91        58
+
+           accuracy                           0.93       423
+          macro avg       0.93      0.93      0.93       423
+       weighted avg       0.93      0.93      0.93       423
+
+Zapisano macierz: results\svm_confusion_matrix.png
+Zapisano wykres: results\accuracy_comparison.png
+Zapisano wykres: results\f1(macro)_comparison.png
