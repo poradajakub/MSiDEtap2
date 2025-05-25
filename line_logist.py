@@ -2,22 +2,20 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, StratifiedKFold
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.impute import SimpleImputer
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, classification_report, log_loss, confusion_matrix
 import os
 
-
-# Tworzenie folderu na wyniki, jeśli go nie ma
 output_dir = 'logistic_results'
 if not os.path.exists(output_dir):
     os.makedirs(output_dir)
 
 
 def softmax(z):
-    z -= np.max(z, axis=1, keepdims=True)  # stabilizacja numeryczna
+    z -= np.max(z, axis=1, keepdims=True)
     exp_z = np.exp(z)
     return exp_z / np.sum(exp_z, axis=1, keepdims=True)
 
@@ -29,18 +27,18 @@ def cross_entropy(y_true, y_pred):
 
 def softmax_gradient_descent(X, y, lr=0.1, epochs=500, batch_size=32):
     m, n = X.shape
-    k = y.shape[1]  # liczba klas
+    k = y.shape[1]
     weights = np.zeros((n, k))
-    accuracies = []  # lista na dokładność w trakcie treningu
-    costs = []  # lista na koszt w trakcie treningu
+    accuracies = []
+    costs = []
 
     for epoch in range(epochs):
         indices = np.random.permutation(m)
         X_shuffled, y_shuffled = X[indices], y[indices]
 
         for i in range(0, m, batch_size):
-            X_batch = X_shuffled[i:i+batch_size]
-            y_batch = y_shuffled[i:i+batch_size]
+            X_batch = X_shuffled[i:i + batch_size]
+            y_batch = y_shuffled[i:i + batch_size]
 
             logits = X_batch @ weights
             y_pred = softmax(logits)
@@ -48,7 +46,6 @@ def softmax_gradient_descent(X, y, lr=0.1, epochs=500, batch_size=32):
             grad = X_batch.T @ error / batch_size
             weights -= lr * grad
 
-        # Oblicz dokładność i koszt po każdej epoce
         logits_test = X @ weights
         y_pred_test = softmax(logits_test)
         y_pred_test_class = np.argmax(y_pred_test, axis=1)
@@ -82,22 +79,7 @@ def load_and_preprocess(data_path, numeric_features, categorical_features, targe
     X_df = df[all_features].copy()
     y_raw = df[target].to_numpy()
 
-    X_train_df, X_test_df, y_train_raw, y_test_raw = train_test_split(
-        X_df, y_raw, test_size=0.2, random_state=42)
-
-    imputer = SimpleImputer(strategy='median')
-    scaler = StandardScaler()
-
-    X_train = scaler.fit_transform(imputer.fit_transform(X_train_df))
-    X_test = scaler.transform(imputer.transform(X_test_df))
-
-    X_train_bias = np.hstack([np.ones((X_train.shape[0], 1)), X_train])
-    X_test_bias = np.hstack([np.ones((X_test.shape[0], 1)), X_test])
-
-    y_train_encoded, encoder = one_hot_encode(y_train_raw)
-    y_test_encoded = encoder.transform(y_test_raw.reshape(-1, 1))
-
-    return X_train_bias, X_test_bias, y_train_encoded, y_test_encoded, y_test_raw, encoder
+    return X_df, y_raw
 
 
 def plot_confusion_matrix(y_true, y_pred, target_names, filename):
@@ -114,77 +96,128 @@ def plot_confusion_matrix(y_true, y_pred, target_names, filename):
     plt.close()
 
 
+def cross_validate_softmax(X_df, y_raw, n_splits=3, lr=0.1, epochs=1000, batch_size=64):
+    skf = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=42)
+    fold_accuracies = []
+    fold_losses = []
+    all_y_true = []
+    all_y_pred = []
+
+    imputer = SimpleImputer(strategy='median')
+    scaler = StandardScaler()
+    encoder = OneHotEncoder(sparse_output=False)
+
+    y_encoded_full = encoder.fit_transform(y_raw.reshape(-1, 1))
+    target_names = encoder.categories_[0]
+
+    for fold, (train_index, test_index) in enumerate(skf.split(X_df, y_raw)):
+        print(f"\n--- Fold {fold + 1}/{n_splits} ---")
+
+        X_train_df, X_test_df = X_df.iloc[train_index], X_df.iloc[test_index]
+        y_train_raw, y_test_raw = y_raw[train_index], y_raw[test_index]
+
+        X_train_imputed = imputer.fit_transform(X_train_df)
+        X_test_imputed = imputer.transform(X_test_df)
+
+        X_train = scaler.fit_transform(X_train_imputed)
+        X_test = scaler.transform(X_test_imputed)
+
+        X_train_bias = np.hstack([np.ones((X_train.shape[0], 1)), X_train])
+        X_test_bias = np.hstack([np.ones((X_test.shape[0], 1)), X_test])
+
+        y_train_encoded = encoder.transform(y_train_raw.reshape(-1, 1))
+        y_test_encoded = encoder.transform(y_test_raw.reshape(-1, 1))
+
+        weights, _, _ = softmax_gradient_descent(X_train_bias, y_train_encoded, lr=lr, epochs=epochs,
+                                                 batch_size=batch_size)
+
+        logits_test = X_test_bias @ weights
+        y_pred_probs = softmax(logits_test)
+        y_pred_own = np.argmax(y_pred_probs, axis=1)
+        y_true_fold = np.argmax(y_test_encoded, axis=1)
+
+        accuracy = accuracy_score(y_true_fold, y_pred_own)
+        loss = cross_entropy(y_test_encoded, y_pred_probs)
+
+        fold_accuracies.append(accuracy)
+        fold_losses.append(loss)
+
+        all_y_true.extend(y_true_fold)
+        all_y_pred.extend(y_pred_own)
+
+        print(f"Accuracy for Fold {fold + 1}: {accuracy:.4f}")
+        print(f"Cross-Entropy Loss for Fold {fold + 1}: {loss:.4f}")
+        print(classification_report(y_true_fold, y_pred_own, target_names=target_names))
+
+    avg_accuracy = np.mean(fold_accuracies)
+    avg_loss = np.mean(fold_losses)
+
+    print(f"\n--- Wyniki walidacji krzyżowej (Własna implementacja) ---")
+    print(f"Średnia dokładność (Accuracy) across folds: {avg_accuracy:.4f}")
+    print(f"Odchylenie standardowe dokładności: {np.std(fold_accuracies):.4f}")
+    print(f"Średni koszt (Cross-Entropy Loss) across folds: {avg_loss:.4f}")
+    print(f"Odchylenie standardowe kosztu: {np.std(fold_losses):.4f}")
+
+    plot_confusion_matrix(all_y_true, all_y_pred, target_names, "cross_validation_own_model")
+
+    return fold_accuracies, fold_losses, target_names
+
+
 def main():
     data_path = 'ObesityDataSet.csv'
-    numeric_features = ['Age', 'Height','Weight', 'FCVC', 'NCP', 'CH2O', 'FAF', 'TUE']
+    numeric_features = ['Age', 'Height', 'Weight', 'FCVC', 'NCP', 'CH2O', 'FAF', 'TUE']
     categorical_features = [
         'Gender', 'family_history_with_overweight', 'FAVC', 'CAEC',
         'SMOKE', 'SCC', 'CALC', 'MTRANS'
     ]
     target = 'NObeyesdad'
 
-    X_train, X_test, y_train_onehot, y_test_onehot, y_test_raw, encoder = load_and_preprocess(
-        data_path, numeric_features, categorical_features, target)
+    X_df, y_raw = load_and_preprocess(data_path, numeric_features, categorical_features, target)
 
-    # Własna implementacja softmax regresji
-    weights, accuracies, costs = softmax_gradient_descent(X_train, y_train_onehot, lr=0.1, epochs=1000, batch_size=64)
-    logits = X_test @ weights
-    y_pred_probs = softmax(logits)
-    y_pred_own = np.argmax(y_pred_probs, axis=1)
-    y_true = np.argmax(y_test_onehot, axis=1)
+    fold_accuracies_own, fold_losses_own, target_names = cross_validate_softmax(X_df, y_raw, n_splits=3, lr=0.1,
+                                                                                epochs=1000, batch_size=64)
 
-    # Zapisz wyniki do pliku
-    with open(f"{output_dir}/results.txt", "w") as f:
-        f.write("== Własna softmax regresja ==\n")
-        f.write(f"Accuracy: {accuracy_score(y_true, y_pred_own)}\n")
-        f.write(f"Cross-Entropy Loss: {cross_entropy(y_test_onehot, y_pred_probs)}\n")
-        f.write(classification_report(y_true, y_pred_own, target_names=encoder.categories_[0]))
+    print("\n--- Porównanie z sklearn LogisticRegression (Walidacja Krzyżowa) ---")
+    skf = StratifiedKFold(n_splits=3, shuffle=True, random_state=21)
+    sklearn_fold_accuracies = []
+    sklearn_fold_losses = []
 
-    # Wykresy
-    plt.figure(figsize=(10, 6))
-    plt.plot(range(1, 1001), accuracies, label="Dokładność", color='blue')
-    plt.xlabel('Epoki')
-    plt.ylabel('Dokładność')
-    plt.title('Dokładność w trakcie treningu (Własna implementacja)')
-    plt.legend()
-    plt.tight_layout()
-    plt.savefig(f"{output_dir}/accuracy_plot.png")
-    plt.close()
+    imputer = SimpleImputer(strategy='median')
+    scaler = StandardScaler()
 
-    # Wykres funkcji kosztu
-    plt.figure(figsize=(10, 6))
-    plt.plot(range(1, 1001), costs, label="Cross-Entropy Loss", color='red')
-    plt.xlabel('Epoki')
-    plt.ylabel('Cross-Entropy Loss')
-    plt.title('Cross-Entropy Loss w trakcie treningu (Własna implementacja)')
-    plt.legend()
-    plt.tight_layout()
-    plt.savefig(f"{output_dir}/cost_plot.png")
-    plt.close()
+    for fold, (train_index, test_index) in enumerate(skf.split(X_df, y_raw)):
+        print(f"\n--- Sklearn Fold {fold + 1}/3 ---")
+        X_train_df, X_test_df = X_df.iloc[train_index], X_df.iloc[test_index]
+        y_train_raw, y_test_raw = y_raw[train_index], y_raw[test_index]
 
-    # Macierz konfuzji z uporządkowanymi klasami
-    class_order = [
-        'Insufficient_Weight', 'Normal_Weight', 'Overweight_Level_I', 'Overweight_Level_II',
-        'Obesity_Type_I', 'Obesity_Type_II', 'Obesity_Type_III'
-    ]
-    plot_confusion_matrix(y_true, y_pred_own, class_order, "own_model")
+        X_train_imputed = imputer.fit_transform(X_train_df)
+        X_test_imputed = imputer.transform(X_test_df)
 
-    # Porównanie z sklearn LogisticRegression
-    print("\n== sklearn LogisticRegression ==")
-    clf = LogisticRegression(solver='lbfgs', max_iter=1000)
-    clf.fit(X_train, np.argmax(y_train_onehot, axis=1))
-    y_pred_sklearn = clf.predict(X_test)
-    y_proba_sklearn = clf.predict_proba(X_test)
+        X_train = scaler.fit_transform(X_train_imputed)
+        X_test = scaler.transform(X_test_imputed)
 
-    # Zapisz wyniki dla sklearn do pliku
-    with open(f"{output_dir}/results.txt", "a") as f:
-        f.write("\n== sklearn LogisticRegression ==\n")
-        f.write(f"Accuracy: {accuracy_score(y_true, y_pred_sklearn)}\n")
-        f.write(f"Cross-Entropy Loss (log_loss): {log_loss(y_test_onehot, y_proba_sklearn)}\n")
-        f.write(classification_report(y_true, y_pred_sklearn, target_names=encoder.categories_[0]))
+        clf = LogisticRegression(solver='lbfgs', max_iter=1000)
+        clf.fit(X_train, y_train_raw)
+        y_pred_sklearn = clf.predict(X_test)
+        y_proba_sklearn = clf.predict_proba(X_test)
 
-    # Macierz konfuzji dla sklearn
-    plot_confusion_matrix(y_true, y_pred_sklearn, class_order, "sklearn_model")
+        accuracy = accuracy_score(y_test_raw, y_pred_sklearn)
+        loss = log_loss(y_test_raw,
+                        y_proba_sklearn)
+
+        sklearn_fold_accuracies.append(accuracy)
+        sklearn_fold_losses.append(
+            loss)
+
+        print(f"Sklearn Accuracy for Fold {fold + 1}: {accuracy:.4f}")
+        print(f"Sklearn Cross-Entropy Loss for Fold {fold + 1}: {loss:.4f}")
+        print(classification_report(y_test_raw, y_pred_sklearn, target_names=target_names))
+
+    print(f"\n--- Wyniki walidacji krzyżowej (sklearn LogisticRegression) ---")
+    print(f"Średnia dokładność (Accuracy) across folds: {np.mean(sklearn_fold_accuracies):.4f}")
+    print(f"Odchylenie standardowe dokładności: {np.std(sklearn_fold_accuracies):.4f}")
+    print(f"Średni koszt (Cross-Entropy Loss) across folds: {np.mean(sklearn_fold_losses):.4f}")
+    print(f"Odchylenie standardowe kosztu: {np.std(sklearn_fold_losses):.4f}")
 
 
 if __name__ == '__main__':
